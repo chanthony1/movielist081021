@@ -7,12 +7,27 @@
 
 import Foundation
 
-class MovieViewModel {
+protocol MovieViewModelDelegate: AnyObject {
+    func displayMovies()
+    func displayError(_ message: String)
+}
+
+protocol MovieViewModelType {
+    var delegate: MovieViewModelDelegate? { get set }
+    var count: Int { get }
+    func fetchMovies()
+    func getTitle(at row: Int) -> String
+    func getOverview(at row: Int) -> String
+}
+
+
+class MovieViewModel: MovieViewModelType {
     
     // communication = closure, delegate/protocol, observer
     
     // MARK:- internal properties
-    var moviesBinding: (() -> Void)?
+    weak var delegate: MovieViewModelDelegate?
+    
     var count: Int { movies.count }
     func getTitle(at row: Int) -> String { movies[row].originalTitle }
     func getOverview(at row: Int) -> String { movies[row].overview }
@@ -30,9 +45,11 @@ class MovieViewModel {
             switch result {
             case .success(let movies):
                 self?.movies = movies
-                self?.moviesBinding?()
+                
+                self?.delegate?.displayMovies()
+                
             case .failure(let error):
-                print(error.localizedDescription)
+                self?.delegate?.displayError(error.localizedDescription)
             }
         }
         

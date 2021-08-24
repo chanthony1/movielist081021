@@ -10,26 +10,38 @@ import UIKit
 class MoviesListViewController: UIViewController {
     
     @IBOutlet private weak var tableView: UITableView!
-    private let viewModel = MovieViewModel()
+    private var viewModel: MovieViewModelType = MovieViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        tableView.delegate = self
+        tableView.dataSource = self
         setUpBinding()
     }
     
     private func setUpBinding() {
         
         // create binding of movies
-        viewModel.moviesBinding = { [weak self] in
-            DispatchQueue.main.async {
-                self?.tableView.reloadData()
-            }
-        }
+        viewModel.delegate = self
         
         viewModel.fetchMovies()
     }
     
+}
+
+extension MoviesListViewController: MovieViewModelDelegate {
+    func displayMovies() {
+        DispatchQueue.main.async { [unowned self] in
+            self.tableView.reloadData()
+        }
+    }
+    
+    func displayError(_ message: String) {
+        DispatchQueue.main.async { [unowned self] in
+            self.displayError(message)
+        }
+    }
 }
 
 extension MoviesListViewController: UITableViewDataSource {
