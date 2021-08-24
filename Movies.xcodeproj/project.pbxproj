@@ -12,6 +12,7 @@
 		473485DE26D3EE5200FD3D46 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473485DD26D3EE5200FD3D46 /* NetworkManager.swift */; };
 		473485E026D3F02600FD3D46 /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473485DF26D3F02600FD3D46 /* NetworkError.swift */; };
 		473485E226D3F65800FD3D46 /* MovieCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473485E126D3F65800FD3D46 /* MovieCell.swift */; };
+		473485E726D521DF00FD3D46 /* MovieViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473485E626D521DF00FD3D46 /* MovieViewModel.swift */; };
 		4763EEC326D3D51300893DD9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4763EEC226D3D51300893DD9 /* AppDelegate.swift */; };
 		4763EEC526D3D51300893DD9 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4763EEC426D3D51300893DD9 /* SceneDelegate.swift */; };
 		4763EEC726D3D51300893DD9 /* MoviesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4763EEC626D3D51300893DD9 /* MoviesListViewController.swift */; };
@@ -26,6 +27,7 @@
 		473485DD26D3EE5200FD3D46 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		473485DF26D3F02600FD3D46 /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
 		473485E126D3F65800FD3D46 /* MovieCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieCell.swift; sourceTree = "<group>"; };
+		473485E626D521DF00FD3D46 /* MovieViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieViewModel.swift; sourceTree = "<group>"; };
 		4763EEBF26D3D51300893DD9 /* Movies.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Movies.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4763EEC226D3D51300893DD9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4763EEC426D3D51300893DD9 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -56,6 +58,14 @@
 			path = NetworkManager;
 			sourceTree = "<group>";
 		};
+		473485E526D520F800FD3D46 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				473485E626D521DF00FD3D46 /* MovieViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		4763EEB626D3D51200893DD9 = {
 			isa = PBXGroup;
 			children = (
@@ -79,7 +89,7 @@
 				4763EEC426D3D51300893DD9 /* SceneDelegate.swift */,
 				473485DC26D3EE3600FD3D46 /* NetworkManager */,
 				4763EED826D3DC1100893DD9 /* Models */,
-				4763EED726D3DC0900893DD9 /* Controllers */,
+				473485E526D520F800FD3D46 /* ViewModels */,
 				4763EED626D3DBFE00893DD9 /* Views */,
 				4763EECB26D3D51B00893DD9 /* Assets.xcassets */,
 				4763EECD26D3D51B00893DD9 /* LaunchScreen.storyboard */,
@@ -92,17 +102,10 @@
 			isa = PBXGroup;
 			children = (
 				4763EEC826D3D51300893DD9 /* Main.storyboard */,
+				4763EEC626D3D51300893DD9 /* MoviesListViewController.swift */,
 				473485E126D3F65800FD3D46 /* MovieCell.swift */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		4763EED726D3DC0900893DD9 /* Controllers */ = {
-			isa = PBXGroup;
-			children = (
-				4763EEC626D3D51300893DD9 /* MoviesListViewController.swift */,
-			);
-			path = Controllers;
 			sourceTree = "<group>";
 		};
 		4763EED826D3DC1100893DD9 /* Models */ = {
@@ -189,6 +192,7 @@
 				473485E226D3F65800FD3D46 /* MovieCell.swift in Sources */,
 				4763EEC726D3D51300893DD9 /* MoviesListViewController.swift in Sources */,
 				473485D926D3DE1E00FD3D46 /* MoviesResponse.swift in Sources */,
+				473485E726D521DF00FD3D46 /* MovieViewModel.swift in Sources */,
 				4763EEC326D3D51300893DD9 /* AppDelegate.swift in Sources */,
 				4763EEC526D3D51300893DD9 /* SceneDelegate.swift in Sources */,
 				473485DB26D3DEEA00FD3D46 /* Movie.swift in Sources */,

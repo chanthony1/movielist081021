@@ -9,36 +9,25 @@ import UIKit
 
 class MoviesListViewController: UIViewController {
     
-    private let networkManager = NetworkManager()
-    private var movies = [Movie]()
-//    private var movies: Array<Movie> = []
-    
     @IBOutlet private weak var tableView: UITableView!
+    private let viewModel = MovieViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        
-        fetchMovies()
-        
+        setUpBinding()
     }
     
-    private func fetchMovies() {
-        // create the url
-        let urlS = "https://api.themoviedb.org/3/movie/popular?api_key=6622998c4ceac172a976a1136b204df4&language=en-US"
+    private func setUpBinding() {
         
-        networkManager.getMovies(from: urlS) { [weak self] result in
-            switch result {
-            case .success(let movies):
-                self?.movies = movies
-                DispatchQueue.main.async {
-                    self?.tableView.reloadData()
-                }
-            case .failure(let error):
-                print(error.localizedDescription)
+        // create binding of movies
+        viewModel.moviesBinding = { [weak self] in
+            DispatchQueue.main.async {
+                self?.tableView.reloadData()
             }
         }
         
+        viewModel.fetchMovies()
     }
     
 }
@@ -46,7 +35,7 @@ class MoviesListViewController: UIViewController {
 extension MoviesListViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return movies.count
+        return viewModel.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -54,8 +43,9 @@ extension MoviesListViewController: UITableViewDataSource {
         else { return UITableViewCell() }
         
         let row = indexPath.row
-        let movie = movies[row]
-        cell.configureCell(title: movie.originalTitle, overview: movie.overview, imageData: nil)
+        let title = viewModel.getTitle(at: row)
+        let overview = viewModel.getOverview(at: row)
+        cell.configureCell(title: title, overview: overview, imageData: nil)
         
         return cell
     }
