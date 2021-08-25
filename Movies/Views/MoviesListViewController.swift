@@ -6,11 +6,13 @@
 //
 
 import UIKit
+import Combine
 
 class MoviesListViewController: UIViewController {
     
     @IBOutlet private weak var tableView: UITableView!
     private var viewModel: MovieViewModelType = MovieViewModel()
+    private var subscribers = Set<AnyCancellable>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,25 +25,44 @@ class MoviesListViewController: UIViewController {
     private func setUpBinding() {
         
         // create binding of movies
-        viewModel.delegate = self
+        viewModel
+            .moviesBinding
+            .receive(on: RunLoop.main)
+            .sink { [weak self] in
+                self?.tableView.reloadData()
+            }
+            .store(in: &subscribers)
+        
+        // create binding for errors
+        viewModel
+            .errorBinding
+            .dropFirst()
+            .receive(on: RunLoop.main)
+            .sink { [weak self] messageError in
+                self?.displayErrorAlert(messageError)
+            }
+            .store(in: &subscribers)
+        
+        // binding to update row
+        viewModel
+            .updateRowBinding
+            .dropFirst()
+            .receive(on: RunLoop.main)
+            .sink { [weak self] row in
+                self?.tableView.reloadRows(at: [IndexPath(row: row, section: 0)], with: .automatic)
+            }
+            .store(in: &subscribers)
         
         viewModel.fetchMovies()
     }
     
-}
-
-extension MoviesListViewController: MovieViewModelDelegate {
-    func displayMovies() {
-        DispatchQueue.main.async { [unowned self] in
-            self.tableView.reloadData()
-        }
+    private func displayErrorAlert(_ errorMessage: String) {
+        let alert = UIAlertController(title: "Error", message: errorMessage, preferredStyle: .alert)
+        let acceptAction = UIAlertAction(title: "Accept", style: .default)
+        alert.addAction(acceptAction)
+        present(alert, animated: true)
     }
     
-    func displayError(_ message: String) {
-        DispatchQueue.main.async { [unowned self] in
-            self.displayError(message)
-        }
-    }
 }
 
 extension MoviesListViewController: UITableViewDataSource {
@@ -57,7 +78,8 @@ extension MoviesListViewController: UITableViewDataSource {
         let row = indexPath.row
         let title = viewModel.getTitle(at: row)
         let overview = viewModel.getOverview(at: row)
-        cell.configureCell(title: title, overview: overview, imageData: nil)
+        let data = viewModel.getImage(at: row)
+        cell.configureCell(title: title, overview: overview, imageData: data)
         
         return cell
     }
