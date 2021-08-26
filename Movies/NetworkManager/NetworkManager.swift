@@ -19,6 +19,8 @@ class NetworkManager {
             return Fail(error: .url).eraseToAnyPublisher()
         }
         
+        print("Calling to: \(urlS)")
+        
         return session
             .dataTaskPublisher(for: url)
             .map { $0.0 }
@@ -36,6 +38,8 @@ class NetworkManager {
         guard let url = URL(string: urlS) else {
             return Fail(error: .url).eraseToAnyPublisher()
         }
+        
+        print("Calling to: \(urlS)")
         
         return session
             .dataTaskPublisher(for: url)

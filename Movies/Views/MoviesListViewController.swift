@@ -5,6 +5,8 @@
 //  Created by Christian Quicano on 23/08/21.
 //
 
+// UserDefault
+
 import UIKit
 import Combine
 
@@ -20,6 +22,14 @@ class MoviesListViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         setUpBinding()
+        
+        // USerDefaults
+//        let userDefaults = UserDefaults.standard
+//        let key = "currentYear"
+//        let currentYear = userDefaults.object(forKey: key)
+//        print(currentYear)
+//        UserDefaults.standard.set(2021, forKey: key)
+        
     }
     
     private func setUpBinding() {
@@ -28,7 +38,7 @@ class MoviesListViewController: UIViewController {
         viewModel
             .moviesBinding
             .receive(on: RunLoop.main)
-            .sink { [weak self] in
+            .sink { [weak self] _ in
                 self?.tableView.reloadData()
             }
             .store(in: &subscribers)

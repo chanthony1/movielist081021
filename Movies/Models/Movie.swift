@@ -19,4 +19,12 @@ struct Movie: Decodable {
         case originalTitle = "original_title"
         case posterPath = "poster_path"
     }
+    
+    init(_ movie: CDMovie) {
+        identifier = Int(movie.identifier)
+        overview = movie.overview ?? ""
+        originalTitle = movie.originalTitle ?? ""
+        posterPath = movie.posterPath ?? ""
+    }
+    
 }
