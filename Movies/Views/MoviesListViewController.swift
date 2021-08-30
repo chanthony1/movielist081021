@@ -15,6 +15,7 @@ class MoviesListViewController: UIViewController {
     @IBOutlet private weak var tableView: UITableView!
     private var viewModel: MovieViewModelType = MovieViewModel()
     private var subscribers = Set<AnyCancellable>()
+    private var indexPathSelected: IndexPath?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,6 +30,19 @@ class MoviesListViewController: UIViewController {
 //        let currentYear = userDefaults.object(forKey: key)
 //        print(currentYear)
 //        UserDefaults.standard.set(2021, forKey: key)
+        
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let indexPathSelected = indexPathSelected
+        else { return }
+        
+        if segue.identifier == "showDetails" {
+            if let destination = segue.destination as? MovieDetailsViewController {
+                let identifier = viewModel.getMovieId(at: indexPathSelected.row)
+                destination.movieId = identifier
+            }
+        }
         
     }
     
@@ -100,6 +114,12 @@ extension MoviesListViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 98.0
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        indexPathSelected = indexPath
+        tableView.deselectRow(at: indexPath, animated: true)
+        performSegue(withIdentifier: "showDetails", sender: nil)
     }
     
 }

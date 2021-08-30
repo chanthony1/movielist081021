@@ -23,6 +23,7 @@ protocol MovieViewModelType {
     func getTitle(at row: Int) -> String
     func getOverview(at row: Int) -> String
     func getImage(at row: Int) -> Data?
+    func getMovieId(at row: Int) -> Int
 }
 
 
@@ -41,6 +42,7 @@ class MovieViewModel: MovieViewModelType {
     var count: Int { movies.count }
     func getTitle(at row: Int) -> String { movies[row].originalTitle }
     func getOverview(at row: Int) -> String { movies[row].overview }
+    func getMovieId(at row: Int) -> Int { movies[row].identifier }
     
     // MARK:- private properties
     private let networkManager = NetworkManager()

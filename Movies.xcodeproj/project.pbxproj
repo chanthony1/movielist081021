@@ -22,6 +22,7 @@
 		4763EECA26D3D51300893DD9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4763EEC826D3D51300893DD9 /* Main.storyboard */; };
 		4763EECC26D3D51B00893DD9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4763EECB26D3D51B00893DD9 /* Assets.xcassets */; };
 		4763EECF26D3D51B00893DD9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4763EECD26D3D51B00893DD9 /* LaunchScreen.storyboard */; };
+		477EF76D26DD20520092A326 /* MovieDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477EF76C26DD20520092A326 /* MovieDetailsViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +44,7 @@
 		4763EECB26D3D51B00893DD9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4763EECE26D3D51B00893DD9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4763EED026D3D51B00893DD9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		477EF76C26DD20520092A326 /* MovieDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +124,7 @@
 				4763EEC826D3D51300893DD9 /* Main.storyboard */,
 				4763EEC626D3D51300893DD9 /* MoviesListViewController.swift */,
 				473485E126D3F65800FD3D46 /* MovieCell.swift */,
+				477EF76C26DD20520092A326 /* MovieDetailsViewController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -207,6 +210,7 @@
 			files = (
 				4704454E26D7C71F0072CFC1 /* MoviesModel.xcdatamodeld in Sources */,
 				473485DE26D3EE5200FD3D46 /* NetworkManager.swift in Sources */,
+				477EF76D26DD20520092A326 /* MovieDetailsViewController.swift in Sources */,
 				473485E026D3F02600FD3D46 /* NetworkError.swift in Sources */,
 				473485E226D3F65800FD3D46 /* MovieCell.swift in Sources */,
 				4763EEC726D3D51300893DD9 /* MoviesListViewController.swift in Sources */,
