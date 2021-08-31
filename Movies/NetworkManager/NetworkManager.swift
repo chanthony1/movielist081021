@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import Alamofire
 
 class NetworkManager {
     
@@ -41,41 +42,30 @@ class NetworkManager {
         
         print("Calling to: \(urlS)")
         
-        return session
-            .dataTaskPublisher(for: url)
-            .map { $0.data }
-            .mapError({ _ in
-                return NetworkError.serverError
-            })
-            .eraseToAnyPublisher()
+        return Future<Data, NetworkError> { promise in
+            
+            AF.request(url, method: .get).response { response in
+                if let error = response.error {
+                    promise(.failure(NetworkError.other(error)))
+                }
+                if let data = response.data {
+                    promise(.success(data))
+                }
+            }
+            
+        }.eraseToAnyPublisher()
+        
+        
+        
+        
+        
+//        return session
+//            .dataTaskPublisher(for: url)
+//            .map { $0.data }
+//            .mapError({ _ in
+//                return NetworkError.serverError
+//            })
+//            .eraseToAnyPublisher()
     }
-    
-//    func getMovies(from urlS: String, completion: @escaping (Result<[Movie], NetworkError>) -> Void) {
-//        
-//        guard let url = URL(string: urlS) else {
-//            completion(Result.failure(NetworkError.url))
-//            return
-//        }
-//        
-//        session.dataTask(with: url) { [weak self] (data, response, error) in
-//            
-//            if let error = error {
-//                completion(.failure(.other(error)))
-//                return
-//            }
-//            
-//            if let data = data {
-//                do {
-//                    let response = try self?.decoder.decode(MoviesResponse.self, from: data)
-//                    let movies = response?.results ?? []
-//                    completion(.success(movies))
-//                    return
-//                } catch (let error) {
-//                    completion(.failure(.other(error)))
-//                }
-//            }
-//        }.resume()
-//        
-//    }
     
 }
