@@ -11,30 +11,13 @@ import Alamofire
 
 class NetworkManager {
     
+    static let shared = NetworkManager()
+    
+    private init() { }
     private let session = URLSession.shared
     private let decoder = JSONDecoder()
     
-    func getMovies(from urlS: String) -> AnyPublisher<[Movie], NetworkError> {
-        
-        guard let url = URL(string: urlS) else {
-            return Fail(error: .url).eraseToAnyPublisher()
-        }
-        
-        print("Calling to: \(urlS)")
-        
-        return session
-            .dataTaskPublisher(for: url)
-            .map { $0.0 }
-            .decode(type: MoviesResponse.self, decoder: decoder)
-            .map { $0.results }
-            .mapError({ _ in
-                return NetworkError.serverError
-            })
-            .eraseToAnyPublisher()
-        
-    }
-    
-    func getImageData(from urlS: String) -> AnyPublisher<Data, NetworkError> {
+    func get(from urlS: String) -> AnyPublisher<Data, NetworkError> {
         
         guard let url = URL(string: urlS) else {
             return Fail(error: .url).eraseToAnyPublisher()
@@ -55,17 +38,6 @@ class NetworkManager {
             
         }.eraseToAnyPublisher()
         
-        
-        
-        
-        
-//        return session
-//            .dataTaskPublisher(for: url)
-//            .map { $0.data }
-//            .mapError({ _ in
-//                return NetworkError.serverError
-//            })
-//            .eraseToAnyPublisher()
     }
     
 }

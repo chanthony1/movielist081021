@@ -14,203 +14,156 @@ import CoreData
 
 // Subject = Publisher & Subscriber
 
-protocol MovieViewModelType {
-    var count: Int { get }
-    var moviesBinding: Published<[Movie]>.Publisher { get }
-    var errorBinding: Published<String>.Publisher { get }
-    var updateRowBinding: Published<Int>.Publisher { get }
-    func fetchMovies()
-    func getTitle(at row: Int) -> String
-    func getOverview(at row: Int) -> String
-    func getImage(at row: Int) -> Data?
-    func getMovieId(at row: Int) -> Int
-}
-
-
-class MovieViewModel: MovieViewModelType {
-    // communication = closure, delegate/protocol, observer
+class MovieViewModel {
     
-    // MARK:- internal properties
-    var moviesBinding: Published<[Movie]>.Publisher { $movies }
-    var errorBinding: Published<String>.Publisher { $messageError }
-    var updateRowBinding: Published<Int>.Publisher { $updateRow }
-    
-    @Published private var updateRow = 0
-    @Published private var messageError = ""
-    @Published private var movies = [Movie]()
-    
-    var count: Int { movies.count }
-    func getTitle(at row: Int) -> String { movies[row].originalTitle }
-    func getOverview(at row: Int) -> String { movies[row].overview }
-    func getMovieId(at row: Int) -> Int { movies[row].identifier }
-    
-    // MARK:- private properties
-    private let networkManager = NetworkManager()
+    // MARK: - private properties
+    private let repository: MovieRepository
     private var subscribers = Set<AnyCancellable>()
     private var imagesCache = [String: Data]()
+    @Published private var movies = [Movie]()
+    @Published private var errorMessage = ""
+    @Published private var movie = Movie()
+    @Published private var companiesLoaded = false
     
-    // MARK:- internal properties
-    func fetchMovies() {
-        
-        // review cache rule
-        // cache rule = every 5 minutes recall to the API
-        if let cache = getCDCache() {
-            let cacheTime: TimeInterval = 5 * 60 // 5 minutes
-            let currentTime = Date()
-            let timestamp = cache.timestamp ?? Date()
-            let elapsedTime = currentTime.timeIntervalSince(timestamp)
-            if elapsedTime > cacheTime {
-                removeAllCache()
-                removeAllMovies()
+    // MARK: - internal properties
+    var moviesBinding: Published<[Movie]>.Publisher { $movies }
+    var errorBinding: Published<String>.Publisher { $errorMessage }
+    var movieBinding: Published<Movie>.Publisher { $movie }
+    var companiesLoadedBinding: Published<Bool>.Publisher { $companiesLoaded }
+    var count: Int { movies.count }
+    var companiesCount: Int { movie.productionCompanies?.count ?? 0 }
+    var movieTitle: String { movie.originalTitle }
+    var movieOverview: String { movie.overview }
+    
+    // MARK: - init
+    init(repository: MovieRepository) {
+        self.repository = repository
+    }
+    
+    // MARK: - internal funcs
+    func getDetailMovie(by identifier: Int) {
+        repository
+            .getDetailMovie()?
+            .sink { _ in }
+                receiveValue: { [weak self] movie in
+                    self?.movie = movie
+                    self?.downloadImagesCompanies(from: movie.productionCompanies)
             }
-        } else {
-            removeAllMovies()
-        }
-        
-        // see if I have data in CoreData
-        let moviesStored = getAllMoviesFromCD()
-        if !moviesStored.isEmpty {
-            let temp = moviesStored.map { cdMovie in
-                return Movie(cdMovie)
-            }
-            movies = temp
-            return
-        }
-        
-        
-        // create the url
-        let urlS = "https://api.themoviedb.org/3/movie/popular?api_key=6622998c4ceac172a976a1136b204df4&language=en-US"
-        
-        networkManager
-            .getMovies(from: urlS)
-            .sink { [weak self] completion in
-                switch completion {
-                case .finished:
-                    break
-                case .failure(let error):
-                    self?.messageError = error.localizedDescription
-                }
-            } receiveValue: { [weak self] movies in
-                self?.saveMovies(movies)
-                self?.movies = movies
+            .store(in: &subscribers)
+
+    }
+    
+    func getMovies() {
+        repository
+            .getMovies()
+            .sink { _ in }
+                receiveValue: { [weak self] movies in
+                    guard let self = self else { return }
+                    self.movies = movies
             }
             .store(in: &subscribers)
     }
     
-    func getImage(at row: Int) -> Data? {
-        
+    func getImageData(at row: Int) -> Data? {
         let movie = movies[row]
         let posterPath = movie.posterPath
         
-        if let data = imagesCache[posterPath] {
-            return data
+        guard !posterPath.isEmpty
+        else { return nil }
+        
+        guard let data = movie.imageData else {
+            // download image
+            let imagePath = NetworkUrl.baseImageUrl.appending(posterPath)
+            repository
+                .downloadImage(from: imagePath)
+                .sink { _ in }
+                    receiveValue: { [weak self] data in
+                        guard let self = self else { return }
+                        self.repository.updateImageMovie(data, by: movie.identifier)
+                        self.updateImageData(data, at: row)
+                }
+                .store(in: &subscribers)
+            return nil
         }
         
-        // search if I have the image in DataBase
-        if let cdMovie = getCDMovie(with: movie.identifier),
-           let imageData = cdMovie.imageData {
-            // save image data into cache
-            imagesCache[posterPath] = imageData
-            return imageData
+        return data
+    }
+    
+    func getMovieImageData(by identifier: Int) -> Data? {
+        guard let movie = repository.searchMovieBy(identifier)
+        else { return nil }
+        return movie.imageData
+    }
+    
+    func getTitle(at row: Int) -> String { movies[row].originalTitle }
+    
+    func getCompanyName(at row: Int) -> String? { movie.productionCompanies?[row].name }
+    
+    func getCompanyImageData(at row: Int) -> Data? {
+        guard let logoPath = movie.productionCompanies?[row].logoPath
+        else { return nil }
+        return imagesCache[logoPath]
+    }
+    
+    func getOverview(at row: Int) -> String { movies[row].overview }
+    
+    func getMovieId(at row: Int) -> Int { movies[row].identifier }
+    
+    func filterMovies(by text: String) {
+        
+        guard !text.isEmpty else {
+            getMovies()
+            return
         }
         
-        // download
-        let urlS = "https://image.tmdb.org/t/p/w500\(posterPath)"
-        networkManager
-            .getImageData(from: urlS)
-            .sink { _ in }
-                receiveValue: { [weak self] data in
-                    self?.imagesCache[posterPath] = data
-                    self?.updateImageData(movieIdentifier: movie.identifier, imageData: data)
-                    self?.updateRow = row
-            }
-            .store(in: &subscribers)
-
-        return nil
+        // Search in Core Data
+        movies = repository.searchMovieByTitle(contains: text)
+        
     }
     
     // MARK: - private funcs
-    private func getAllMoviesFromCD() -> [CDMovie] {
-        let fetch: NSFetchRequest<CDCache> = CDCache.fetchRequest()
-        let context = CoreDataManager.shared.mainContext
-        let cache = try? context.fetch(fetch).first
-        var movies = cache?.movies?.allObjects as? [CDMovie]
-        movies = movies?.sorted(by: { m1, m2 in
-            let d1 = m1.dateCreated ?? Date()
-            let d2 = m2.dateCreated ?? Date()
-            return d1 < d2
-        })
-        return movies ?? []
+    private func updateImageData(_ data: Data, at row: Int) {
+        var temp = [Movie]()
+        for (index, movie) in movies.enumerated() {
+            var movie = movie
+            movie.imageData = index == row ? data : movie.imageData
+            temp.append(movie)
+        }
+        movies = temp
     }
     
-    private func saveMovies(_ movies: [Movie]) {
+    // use this method to download images from the movie image, I use the companies array from the movie detail
+    private func downloadImagesCompanies(from companies: [Company]?) {
+        guard let companies = companies else { return }
+    
+        let group = DispatchGroup()
         
-        let context = CoreDataManager.shared.mainContext
-        
-        guard let entity = NSEntityDescription.entity(forEntityName: "CDCache", in: context)
-        else { return }
-        
-        let cache = CDCache(entity: entity, insertInto: context)
-        cache.timestamp = Date()
-        
-        for movie in movies {
+        for company in companies {
+            guard let logoPath = company.logoPath else { continue }
+            let url = NetworkUrl.baseImageUrl.appending(logoPath)
             
-            guard let entity = NSEntityDescription.entity(forEntityName: "CDMovie", in: context)
-            else { continue }
+            group.enter()
             
-            let cdMovie = CDMovie(entity: entity, insertInto: context)
-            cdMovie.identifier = Int64(movie.identifier)
-            cdMovie.originalTitle = movie.originalTitle
-            cdMovie.overview = movie.overview
-            cdMovie.posterPath = movie.posterPath
-            cdMovie.dateCreated = Date()
-            
-            cache.addToMovies(cdMovie)
-            
+            repository
+                .downloadImage(from: url)
+                .sink { completion in
+                    switch completion {
+                    case .finished:
+                        break
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                    }
+                    group.leave()
+                }
+                receiveValue: { [weak self] data in
+                    guard let self = self else { return }
+                    self.imagesCache[logoPath] = data
+                }
+                .store(in: &subscribers)
         }
         
-        CoreDataManager.shared.saveContext(context)
-    }
-    
-    private func updateImageData(movieIdentifier: Int, imageData: Data) {
-        let context = CoreDataManager.shared.mainContext
-        let movie = getCDMovie(with: movieIdentifier)
-        movie?.imageData = imageData
-        CoreDataManager.shared.saveContext(context)
-    }
-    
-    private func getCDMovie(with identifier: Int) -> CDMovie? {
-        let fetch: NSFetchRequest<CDMovie> = CDMovie.fetchRequest()
-        let predicate = NSPredicate(format: "%K == %@", #keyPath(CDMovie.identifier), "\(identifier)")
-        fetch.predicate = predicate
-        let context = CoreDataManager.shared.mainContext
-        let movie = try? context.fetch(fetch).first
-        return movie
-    }
-    
-    private func getCDCache() -> CDCache? {
-        let fetch: NSFetchRequest<CDCache> = CDCache.fetchRequest()
-        let context = CoreDataManager.shared.mainContext
-        let cache = try? context.fetch(fetch).first
-        return cache
-    }
-    
-    private func removeAllMovies() {
-        let movies = getAllMoviesFromCD()
-        let context = CoreDataManager.shared.mainContext
-        for movie in movies {
-            context.delete(movie)
+        group.notify(queue: DispatchQueue.global()) { [weak self] in
+            self?.companiesLoaded = true
         }
-        CoreDataManager.shared.saveContext(context)
-    }
-    
-    private func removeAllCache() {
-        let fetch: NSFetchRequest<CDCache> = CDCache.fetchRequest()
-        let context = CoreDataManager.shared.mainContext
-        let caches = (try? context.fetch(fetch)) ?? []
-        for cache in caches {
-            context.delete(cache)
-        }
-        CoreDataManager.shared.saveContext(context)
     }
 }
