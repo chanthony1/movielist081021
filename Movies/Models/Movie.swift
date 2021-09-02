@@ -28,6 +28,7 @@ struct Movie: Decodable {
         overview = movie.overview ?? ""
         originalTitle = movie.originalTitle ?? ""
         posterPath = movie.posterPath ?? ""
+        imageData = movie.imageData
     }
     
     init(id: Int = 0, posterPath: String = "", overview: String = "", originalTitle: String = "", imageData: Data? = nil) {

@@ -27,14 +27,15 @@ class NetworkManager {
         
         return Future<Data, NetworkError> { promise in
             
-            AF.request(url, method: .get).response { response in
-                if let error = response.error {
-                    promise(.failure(NetworkError.other(error)))
+            AF.request(url, method: .get)
+                .response { response in
+                    if let error = response.error {
+                        promise(.failure(NetworkError.other(error)))
+                    }
+                    if let data = response.data {
+                        promise(.success(data))
+                    }
                 }
-                if let data = response.data {
-                    promise(.success(data))
-                }
-            }
             
         }.eraseToAnyPublisher()
         
