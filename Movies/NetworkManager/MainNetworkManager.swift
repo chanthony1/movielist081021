@@ -9,9 +9,13 @@ import Foundation
 import Combine
 import Alamofire
 
-class NetworkManager {
+protocol NetworkManager {
+    func get(from urlS: String) -> AnyPublisher<Data, NetworkError>
+}
+
+class MainNetworkManager: NetworkManager {
     
-    static let shared = NetworkManager()
+    static let shared = MainNetworkManager()
     
     private init() { }
     private let session = URLSession.shared
