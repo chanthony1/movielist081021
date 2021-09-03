@@ -7,22 +7,26 @@
 
 import Foundation
 import Combine
-import Alamofire
 
-class MovieImageRepositoryRemote {
+struct ImageResponse: Decodable { }
+
+class MovieImageRepositoryRemote: BaseRepositoryRemote {
+    
+    typealias T = ImageResponse
     
     var url: String
     var networkManager: NetworkManager
     var decoder: JSONDecoder
+    var subscribers: Set<AnyCancellable>
     
-    private var subscribers = Set<AnyCancellable>()
-    
-    init(url: String = "",
-         networkManager: NetworkManager = NetworkManager.shared,
-         decoder: JSONDecoder = JSONDecoder()) {
+    required init(url: String = "",
+                  networkManager: NetworkManager = MainNetworkManager.shared,
+                  decoder: JSONDecoder = JSONDecoder(),
+                  subscribers: Set<AnyCancellable> = Set<AnyCancellable>()) {
         self.url = url
         self.networkManager = networkManager
         self.decoder = decoder
+        self.subscribers = subscribers
     }
     
     func getData() -> AnyPublisher<Data, NetworkError> {

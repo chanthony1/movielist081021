@@ -56,8 +56,16 @@ class MovieViewModel {
     func getMovies() {
         repository
             .getMovies()
-            .sink { _ in }
-                receiveValue: { [weak self] movies in
+            .sink { [weak self] completion in
+                guard let self = self else { return }
+                switch completion {
+                case .finished:
+                    break
+                case .failure(let error):
+                    self.errorMessage = error.localizedDescription
+                }
+            }
+            receiveValue: { [weak self] movies in
                     guard let self = self else { return }
                     self.movies = movies
             }
