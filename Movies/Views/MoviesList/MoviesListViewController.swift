@@ -33,6 +33,7 @@ class MoviesListViewController: UIViewController {
         let searchBar = UISearchBar(frame: .zero)
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         searchBar.delegate = self
+        searchBar.searchTextField.accessibilityIdentifier = Accessibility.MoviesList.searchBar
         return searchBar
     }()
     
@@ -43,6 +44,7 @@ class MoviesListViewController: UIViewController {
         tableView.dataSource = self
         tableView.register(MovieCell.self, forCellReuseIdentifier: MovieCell.identifier)
         tableView.keyboardDismissMode = .onDrag
+        tableView.accessibilityIdentifier = Accessibility.MoviesList.tableView
         return tableView
     }()
     
