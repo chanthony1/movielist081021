@@ -18,10 +18,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let windowsScene = (scene as? UIWindowScene) else { return }
         
+        // disable animation
+        UIView.setAnimationsEnabled(false)
+        
+        // get arguments
+        let arguments = ProcessInfo.processInfo.arguments
+        
+        // creating view
         self.window = UIWindow(windowScene: windowsScene)
         
         var viewController: UIViewController?
-        viewController = MoviesListViewController()
+        
+        if arguments.contains(keyLaunchMoviesScreen) {
+            viewController = MoviesListViewController()
+        }
+        
+        // set the viewcontroller to the root app
         window?.rootViewController = viewController
         window?.makeKeyAndVisible()
     }
