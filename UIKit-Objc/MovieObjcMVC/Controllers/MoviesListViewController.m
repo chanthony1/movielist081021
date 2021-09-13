@@ -90,7 +90,14 @@
     }
     
     Movie* movie = [self.movies objectAtIndex:indexPath.row];
-    [cell configureCellWithTitle:movie.title overview:movie.overView imageData:nil];
+    [cell configureCellWithTitle:movie.title overview:movie.overView];
+    
+    // download image
+    [[NetworkManager sharedInstance] getImageWithPath:movie.posterImage completion:^(UIImage * image) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [cell.movieImageView setImage:image];
+        });
+    }];
     
     return cell;
     
@@ -114,6 +121,7 @@
     
     return cell;
      */
+     
 }
 
 // MARK: - UITableViewDataSourcePrefetching

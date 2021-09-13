@@ -21,7 +21,7 @@ import UIKit
         return stackView
     }()
     
-    lazy private var movieImageView: UIImageView = {
+    @objc lazy var movieImageView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFit
@@ -58,16 +58,13 @@ import UIKit
     }()
     
     // MARK:- internal funcs
-    @objc func configureCell(title: String?, overview: String?, imageData: Data?) {
+    @objc func configureCell(title: String?, overview: String?) {
         
         setUpUI()
         
         movieTitleLabel.text = title
         movieOverviewLabel.text = overview
-        movieImageView.image = nil
-        if let data = imageData {
-            movieImageView.image = UIImage(data: data)
-        }
+        
     }
     
     // MARK:- private funcs
