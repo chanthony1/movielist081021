@@ -3,7 +3,9 @@
 
 def github_pods
   pod 'Alamofire', '5.4'
-  pod 'IQKeyboardManagerSwift', '6.3.0'
+  #pod 'MovieModule',  :git => 'git@github.com:chanthony1/moviemodule081021.git'
+  pod 'MovieModule',  :path => '/Users/cquicano/Repositories/moviemodule081021'
+  pod 'SwiftLint'
 end
 
 target 'Movies' do

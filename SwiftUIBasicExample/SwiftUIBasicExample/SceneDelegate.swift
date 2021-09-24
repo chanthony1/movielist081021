@@ -1,28 +1,33 @@
 //
 //  SceneDelegate.swift
-//  Movies
+//  SwiftUIBasicExample
 //
-//  Created by Christian Quicano on 23/08/21.
+//  Created by Christian Quicano on 14/09/21.
 //
 
 import UIKit
+import SwiftUI
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-    var coordinator: Coordinator?
+
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        guard let windowsScene = (scene as? UIWindowScene) else { return }
 
-        self.window = UIWindow(windowScene: windowsScene)
-        coordinator = MainCoordinator()
-        coordinator?.start()
-        window?.rootViewController = coordinator?.navigationController
-        window?.makeKeyAndVisible()
+        // Create the SwiftUI view that provides the window contents.
+        let contentView = MainNavigationView()
+
+        // Use a UIHostingController as window root view controller.
+        if let windowScene = scene as? UIWindowScene {
+            let window = UIWindow(windowScene: windowScene)
+            window.rootViewController = UIHostingController(rootView: contentView)
+            self.window = window
+            window.makeKeyAndVisible()
+        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

@@ -25,7 +25,7 @@ class MovieViewModelTest: BaseRepositoryRemoteTest {
         let fakeNetworkManager = try responseSuccess(json: "json_movies_success")
         fakeNetworkManager.successExpectation = Test.expec(self)
         moviesRemote.networkManager = fakeNetworkManager
-        
+
         // When
         viewModel
             .moviesBinding
@@ -40,13 +40,13 @@ class MovieViewModelTest: BaseRepositoryRemoteTest {
         // Then
         waitForExpectations(timeout: 1)
     }
-    
+
     func testGetMovies_Failure() throws {
         // Given
         let fakeNetworkManager = responseFailure()
         fakeNetworkManager.failureExpectation = Test.expec(self)
         moviesRemote.networkManager = fakeNetworkManager
-        
+
         // When
         viewModel
             .errorBinding
@@ -55,7 +55,7 @@ class MovieViewModelTest: BaseRepositoryRemoteTest {
                 XCTAssertNotNil(error)
             })
             .store(in: &subscribers)
-        
+
         viewModel.getMovies()
         
         // Then

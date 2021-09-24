@@ -1,20 +1,28 @@
 PODS:
   - Alamofire (5.4.0)
-  - IQKeyboardManagerSwift (6.3.0)
+  - MovieModule (1.0):
+    - Alamofire (= 5.4)
+  - SwiftLint (0.44.0)
 
 DEPENDENCIES:
   - Alamofire (= 5.4)
-  - IQKeyboardManagerSwift (= 6.3.0)
+  - MovieModule (from `/Users/cquicano/Repositories/moviemodule081021`)
+  - SwiftLint
 
 SPEC REPOS:
   trunk:
     - Alamofire
-    - IQKeyboardManagerSwift
+    - SwiftLint
+
+EXTERNAL SOURCES:
+  MovieModule:
+    :path: "/Users/cquicano/Repositories/moviemodule081021"
 
 SPEC CHECKSUMS:
   Alamofire: 3b6a534a3df22db367e4dedeeca73d1ddfcf0e2f
-  IQKeyboardManagerSwift: a8228c257614af98743b4cd8584637025f36358f
+  MovieModule: 7af8e68f5a51640df238289813058cb48da28fca
+  SwiftLint: e96c0a8c770c7ebbc4d36c55baf9096bb65c4584
 
-PODFILE CHECKSUM: 3ac2c7385d4b07c4492f6d678986a96e4c179328
+PODFILE CHECKSUM: eac7f4d020b297c3b0c705dd6460011d658efb2f
 
 COCOAPODS: 1.10.2

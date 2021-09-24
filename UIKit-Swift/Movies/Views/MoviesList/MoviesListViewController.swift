@@ -9,6 +9,7 @@
 
 import UIKit
 import Combine
+import MovieModule
 
 class MoviesListViewController: UIViewController {
     

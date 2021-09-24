@@ -1,8 +1,8 @@
 //
 //  AppDelegate.swift
-//  Movies
+//  SwiftUIBasicExample
 //
-//  Created by Christian Quicano on 23/08/21.
+//  Created by Christian Quicano on 14/09/21.
 //
 
 import UIKit
@@ -10,26 +10,10 @@ import UIKit
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
+
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        
-        // asking user permissions
-        let center = UNUserNotificationCenter.current()
-        center.delegate = self
-        center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-
-            if let error = error {
-                // Handle the error here.
-                print(error)
-                print(error.localizedDescription)
-            }
-
-            // Enable or disable features based on the authorization.
-
-        }
-        
-        UIApplication.shared.registerForRemoteNotifications()
-        
         return true
     }
 
@@ -50,11 +34,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
-extension AppDelegate: UNUserNotificationCenterDelegate {
-    
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        let token = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
-        print(token)
-    }
-    
-}
