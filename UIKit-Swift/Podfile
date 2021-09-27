@@ -3,12 +3,12 @@
 
 def github_pods
   pod 'Alamofire', '5.4'
-  #pod 'MovieModule',  :git => 'git@github.com:chanthony1/moviemodule081021.git'
-  pod 'MovieModule',  :path => '/Users/cquicano/Repositories/moviemodule081021'
+  pod 'MovieModule',  :git => 'git@github.com:chanthony1/moviemodule081021.git'
+  #pod 'MovieModule',  :path => '/Users/cquicano/Repositories/moviemodule081021'
   pod 'SwiftLint'
 end
 
-target 'Movies' do
+target 'MoviesProd' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
@@ -17,6 +17,14 @@ target 'Movies' do
 end
 
 target 'MoviesMock' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+
+  github_pods
+
+end
+
+target 'MoviesStaging' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 

@@ -6,7 +6,7 @@ PODS:
 
 DEPENDENCIES:
   - Alamofire (= 5.4)
-  - MovieModule (from `/Users/cquicano/Repositories/moviemodule081021`)
+  - "MovieModule (from `git@github.com:chanthony1/moviemodule081021.git`)"
   - SwiftLint
 
 SPEC REPOS:
@@ -16,13 +16,18 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   MovieModule:
-    :path: "/Users/cquicano/Repositories/moviemodule081021"
+    :git: "git@github.com:chanthony1/moviemodule081021.git"
+
+CHECKOUT OPTIONS:
+  MovieModule:
+    :commit: a6e3486825aa52fa1194dfa2e519242b87752daa
+    :git: "git@github.com:chanthony1/moviemodule081021.git"
 
 SPEC CHECKSUMS:
   Alamofire: 3b6a534a3df22db367e4dedeeca73d1ddfcf0e2f
   MovieModule: 7af8e68f5a51640df238289813058cb48da28fca
   SwiftLint: e96c0a8c770c7ebbc4d36c55baf9096bb65c4584
 
-PODFILE CHECKSUM: eac7f4d020b297c3b0c705dd6460011d658efb2f
+PODFILE CHECKSUM: 2af3621cc2f9a982c59eca30de34d475652f434f
 
 COCOAPODS: 1.10.2
